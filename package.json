@@ -25,7 +25,6 @@
     "@babel/node": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
     "nodemon": "^2.0.7",
-    "sequelize-cli": "^6.2.0",
-    "dsadas": "2132132"
+    "sequelize-cli": "^6.2.0"
   }
 }
