@@ -100,9 +100,29 @@ let updateUserData = (data) => {
     })
 }
 
+let deleteUserByID = (userID) => {
+    return new Promise(async (resolve, reject) => {
+        // x <- y
+        try {
+            let user = await db.User.findOne({
+                where: { id: userID }
+            })
+
+            if (user) {
+                await user.destroy();
+
+            }
+            resolve(); // == return;
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     createNewUser: createNewUser,
     getAllUser: getAllUser,
     getUserInfoByID: getUserInfoByID,
     updateUserData: updateUserData,
+    deleteUserByID: deleteUserByID,
 }
