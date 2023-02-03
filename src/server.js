@@ -3,11 +3,20 @@ import bodyParser from "body-parser"; // take params from users
 import viewEngine from "./config/viewEngine";
 import initWebRoutes from "./route/web.js";
 import connectDB from "./config/connectDB";
+import cors from 'cors';
+
 require('dotenv').config(); // run process.env [line19]
 // /user?id=7 - user body-parsers to get params from id#7
 
 
 let app = express(); // instance off app express
+const corsOptions = {
+    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+    optionSuccessStatus: 200
+}
+app.use(cors(corsOptions));
+
 
 //config app
 
