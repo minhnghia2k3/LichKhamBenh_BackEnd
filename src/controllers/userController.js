@@ -2,7 +2,6 @@ import userService from "../services/userService";
 
 let handleLogin = async (req, res) => {
     let email = req.body.email;
-    console.log('your email: ', email);
     let password = req.body.password;
 
     //check email exist
@@ -27,7 +26,7 @@ let handleLogin = async (req, res) => {
 }
 
 let handleGetAllUser = async (req, res) => {
-    let id = req.body.id; //all, id
+    let id = req.query.id; //all, id
     if (!id) {
         return res.status(200).json({
             errCode: 1,
