@@ -1,6 +1,19 @@
 import bcrypt from 'bcryptjs';
 import db from "../models/index";
 
+const salt = bcrypt.genSaltSync(10);
+
+let hashUserPassword = (password) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let hashPassword = await bcrypt.hashSync(password, salt);
+            resolve(hashPassword);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -94,7 +107,114 @@ let getAllUsers = (userID) => {
     })
 }
 
+let createNewUser = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //check email is exist?
+            let check = await checkUserEmail(data.email);
+            if (check) {
+                resolve({
+                    errCode: 1,
+                    message: "Your email already exist!"
+                })
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    gender: data.gender === '1' ? true : false,
+                    // image: data.image,
+                    roleID: data.roleID,
+                    // positionID: data.positionID,
+                })
+            }
+            resolve({
+                errCode: 0,
+                message: "OK",
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let editUser = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 2,
+                    errMessage: "Missing required parameters!"
+                })
+            }
+            //check user
+            let user = await db.User.findOne({
+                where: { id: data.id },
+                raw: false // return instance data
+            })
+            if (!user) {
+                resolve({
+                    errCode: 1,
+                    message: "User is not exist!"
+                })
+            } else {
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
+                await user.save();
+                // await db.User.save({
+                //     email: data.email,
+                //     firstName: data.firstName,
+                //     lastName: data.lastName,
+                //     address: data.address,
+                // })
+                resolve({
+                    errCode: 0,
+                    message: "Update user success!"
+                })
+            }
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let deleteUser = async (userID) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: userID }
+            })
+            if (!user) {
+                resolve({
+                    errCode: 2,
+                    message: "User is not exist!"
+                })
+            } else {
+                // Loi user.destroy is not a function => query: raw -> tra ve object { kieu sequelize la: instance}
+                await db.User.destroy({
+                    where: { id: userID }
+                })
+            }
+            resolve({
+                errCode: 0,
+                message: "Delete user success!"
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     handleUserLogin: handleUserLogin,
-    getAllUsers: getAllUsers
+    getAllUsers: getAllUsers,
+    createNewUser: createNewUser,
+    deleteUser: deleteUser,
+    editUser, editUser,
 }
