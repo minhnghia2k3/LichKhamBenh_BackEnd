@@ -115,7 +115,7 @@ let createNewUser = (data) => {
             if (check) {
                 resolve({
                     errCode: 1,
-                    message: "Your email already exist!"
+                    errMessage: "Your email already exist!"
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -134,7 +134,7 @@ let createNewUser = (data) => {
             }
             resolve({
                 errCode: 0,
-                message: "OK",
+                errMessage: "OK",
             })
         } catch (e) {
             reject(e)
@@ -142,9 +142,10 @@ let createNewUser = (data) => {
     })
 }
 
-let editUser = (data) => {
+let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log("check nodejs: ", data);
             if (!data.id) {
                 resolve({
                     errCode: 2,
@@ -159,7 +160,7 @@ let editUser = (data) => {
             if (!user) {
                 resolve({
                     errCode: 1,
-                    message: "User is not exist!"
+                    errMessage: "User is not exist!"
                 })
             } else {
                 user.firstName = data.firstName;
@@ -174,7 +175,7 @@ let editUser = (data) => {
                 // })
                 resolve({
                     errCode: 0,
-                    message: "Update user success!"
+                    errMessage: "Update user success!"
                 })
             }
 
@@ -193,7 +194,7 @@ let deleteUser = async (userID) => {
             if (!user) {
                 resolve({
                     errCode: 2,
-                    message: "User is not exist!"
+                    errMessage: "User is not exist!"
                 })
             } else {
                 // Loi user.destroy is not a function => query: raw -> tra ve object { kieu sequelize la: instance}
@@ -203,7 +204,7 @@ let deleteUser = async (userID) => {
             }
             resolve({
                 errCode: 0,
-                message: "Delete user success!"
+                errMessage: "Delete user success!"
             })
         } catch (e) {
             reject(e)
@@ -216,5 +217,5 @@ module.exports = {
     getAllUsers: getAllUsers,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
-    editUser, editUser,
-}
+    updateUserData: updateUserData,
+} 
